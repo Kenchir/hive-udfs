@@ -42,10 +42,9 @@ public class Encrypt extends GenericUDF {
             throw new UDFArgumentException("first argument must be a string, second argument must be a string, third argument must be a string");
         }
         this.key = (StringObjectInspector) a;
-        this.column = (StringObjectInspector) b;
-        this.algorithm = (StringObjectInspector) c;
+        this.algorithm = (StringObjectInspector) b;
+        this.column = (StringObjectInspector) c;
 
-// the return type of our function is a boolean, so we provide the correct object inspector
         return PrimitiveObjectInspectorFactory.javaStringObjectInspector;
     }
 
@@ -53,12 +52,16 @@ public class Encrypt extends GenericUDF {
     public Object evaluate(DeferredObject[] arguments) throws HiveException {
         String encKey = key.getPrimitiveJavaObject(arguments[0].get());
         String encAlgorithm = algorithm.getPrimitiveJavaObject(arguments[1].get());
+
         String colName = column.getPrimitiveJavaObject(arguments[2].get());
 
         if (encKey == null || colName == null || encAlgorithm == null) {
             return null;
         }
 
+//        try {
+//            EncAlgo.valueOf(encAlgorithm).getAlgo();
+//        }
         SecretKeySpec secretKeySpec = new SecretKeySpec(Base64.getDecoder().decode(encKey), "AES");
         Cipher cipher = null;
         try {

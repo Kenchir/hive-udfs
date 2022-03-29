@@ -17,6 +17,7 @@ public class EncryptTest {
 
     @Test
     public void testEncryptReturnsCorrectValues() throws HiveException {
+        System.out.println(EncAlgo.AES_CBC);
         Encrypt encrypt = new Encrypt();
         ObjectInspector stringKey = PrimitiveObjectInspectorFactory.javaStringObjectInspector;
         ObjectInspector stringAlgo = PrimitiveObjectInspectorFactory.javaStringObjectInspector;
