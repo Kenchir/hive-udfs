@@ -1,6 +1,10 @@
 # This UDF helps in encrypting or decrypting a String column type in a hive table.
 
 ## Usage
+  The encrypt function takes three arguments:
+   ``` java
+   encrypt(String encryptionKey, String encryptionAlgorithm, hive table column of string data type to encrypt )
+   ```
 
 * Copy the jar to hdfs
   ``` bash
@@ -42,25 +46,25 @@ INFO  : OK
 
 ```
 
-## Sample Encrpted name column
+## Sample Encrypted name column
 
 ``` bash
-0: jdbc:hive2://bigdatadev> select enc('n9Tp9+69gxNdUg9F632u1cCRuqcOuGmN','AES/CBC/PKCS5Padding','name') from employees2;
-INFO  : Compiling command(queryId=hive_20220330011358_cb85e288-0a1c-4edb-9b0f-5ba0341af39a): select enc('n9Tp9+69gxNdUg9F632u1cCRuqcOuGmN','AES/CBC/PKCS5Padding','name') from employees2
+0: jdbc:hive2://bigdatadev> select enc('n9Tp9+69gxNdUg9F632u1cCRuqcOuGmN','AES/CBC/PKCS5Padding',name) as enc_name, destination from employees2;
+INFO  : Compiling command(queryId=hive_20220330095147_6472db4d-702a-4c0c-ad4c-296bbda2f6be): select enc('n9Tp9+69gxNdUg9F632u1cCRuqcOuGmN','AES/CBC/PKCS5Padding',name) as enc_name, destination from employees2
 INFO  : Semantic Analysis Completed (retrial = false)
-INFO  : Returning Hive schema: Schema(fieldSchemas:[FieldSchema(name:_c0, type:string, comment:null)], properties:null)
-INFO  : Completed compiling command(queryId=hive_20220330011358_cb85e288-0a1c-4edb-9b0f-5ba0341af39a); Time taken: 1.073 seconds
-INFO  : Executing command(queryId=hive_20220330011358_cb85e288-0a1c-4edb-9b0f-5ba0341af39a): select enc('n9Tp9+69gxNdUg9F632u1cCRuqcOuGmN','AES/CBC/PKCS5Padding','name') from employees2
-INFO  : Completed executing command(queryId=hive_20220330011358_cb85e288-0a1c-4edb-9b0f-5ba0341af39a); Time taken: 0.057 seconds
+INFO  : Returning Hive schema: Schema(fieldSchemas:[FieldSchema(name:enc_name, type:string, comment:null), FieldSchema(name:destination, type:string, comment:null)], properties:null)
+INFO  : Completed compiling command(queryId=hive_20220330095147_6472db4d-702a-4c0c-ad4c-296bbda2f6be); Time taken: 1.251 seconds
+INFO  : Executing command(queryId=hive_20220330095147_6472db4d-702a-4c0c-ad4c-296bbda2f6be): select enc('n9Tp9+69gxNdUg9F632u1cCRuqcOuGmN','AES/CBC/PKCS5Padding',name) as enc_name, destination from employees2
+INFO  : Completed executing command(queryId=hive_20220330095147_6472db4d-702a-4c0c-ad4c-296bbda2f6be); Time taken: 0.042 seconds
 INFO  : OK
-+---------------------------+
-|            _c0            |
-+---------------------------+
-| wEDd9Ex8lD367bDPxIQoGQ==  |
-| wEDd9Ex8lD367bDPxIQoGQ==  |
-| wEDd9Ex8lD367bDPxIQoGQ==  |
-| wEDd9Ex8lD367bDPxIQoGQ==  |
-+---------------------------+
-4 rows selected (1.863 seconds)
++---------------------------+--------------+
+|         enc_name          | destination  |
++---------------------------+--------------+
+| OzasFqcAk5A6wz1ejk4ueA==  | Addis        |
+| EGLSWVfL5IvcUQVSWFm/zg==  | CapeTown     |
+| t1SG3CQz+iqbVhXqWdewSg==  | Cairo        |
+| f5QVzJn+ZYTZgpPRmIha2Q==  | Lagos        |
++---------------------------+--------------+
+
 
 ```
