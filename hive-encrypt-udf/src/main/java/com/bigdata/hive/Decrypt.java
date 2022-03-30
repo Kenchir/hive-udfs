@@ -41,8 +41,9 @@ public class Decrypt extends GenericUDF {
             throw new UDFArgumentException("first argument must be a string, second argument must be a string, third argument must be a string");
         }
         this.key = (StringObjectInspector) a;
-        this.column = (StringObjectInspector) b;
-        this.algorithm = (StringObjectInspector) c;
+        this.algorithm = (StringObjectInspector) b;
+        this.column = (StringObjectInspector) c;
+        
 
         // the return type of our function is a string, so we provide the correct object inspector
         return PrimitiveObjectInspectorFactory.javaStringObjectInspector;
