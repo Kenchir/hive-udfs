@@ -10,48 +10,47 @@ import org.junit.Test;
 
 public class EncryptTest {
 
-    private final String encKey = "n9Tp9+69gxNdUg9F632u1cCRuqcOuGmN";
-    private final String encAlgo = "AES/CBC/PKCS5Padding";
+
     private final String colVal = "123456789";
     private final String res = "b2vgwX61osfSwv/pMEBQzg==";
+    private final String idVal = "callingpartynumbershpsqldb";
 
     @Test
     public void testEncryptReturnsCorrectValues() throws HiveException {
         System.out.println(EncAlgo.AES_CBC);
         Encrypt encrypt = new Encrypt();
-        ObjectInspector stringKey = PrimitiveObjectInspectorFactory.javaStringObjectInspector;
-        ObjectInspector stringAlgo = PrimitiveObjectInspectorFactory.javaStringObjectInspector;
+
+        ObjectInspector stringIdVal= PrimitiveObjectInspectorFactory.javaStringObjectInspector;
         ObjectInspector stringColVal = PrimitiveObjectInspectorFactory.javaStringObjectInspector;
 
-        JavaStringObjectInspector resultInspector = (JavaStringObjectInspector) encrypt.initialize(new ObjectInspector[]{stringKey, stringAlgo, stringColVal});
+        JavaStringObjectInspector resultInspector = (JavaStringObjectInspector) encrypt.initialize(new ObjectInspector[]{stringColVal, stringIdVal});
 
-        Object result = encrypt.evaluate(new GenericUDF.DeferredObject[]{new GenericUDF.DeferredJavaObject(encKey), new GenericUDF.DeferredJavaObject(encAlgo), new GenericUDF.DeferredJavaObject(colVal)});
+        Object result = encrypt.evaluate(new GenericUDF.DeferredObject[]{new GenericUDF.DeferredJavaObject(colVal), new GenericUDF.DeferredJavaObject(idVal)});
         Assert.assertEquals(res, resultInspector.getPrimitiveJavaObject(result));
     }
 
     @Test
     public void testEncryptReturnsWrongValues() throws HiveException {
         Encrypt encrypt = new Encrypt();
-        ObjectInspector stringKey = PrimitiveObjectInspectorFactory.javaStringObjectInspector;
-        ObjectInspector stringAlgo = PrimitiveObjectInspectorFactory.javaStringObjectInspector;
+
+        ObjectInspector stringIdVal= PrimitiveObjectInspectorFactory.javaStringObjectInspector;
         ObjectInspector stringColVal = PrimitiveObjectInspectorFactory.javaStringObjectInspector;
 
-        JavaStringObjectInspector resultInspector = (JavaStringObjectInspector) encrypt.initialize(new ObjectInspector[]{stringKey, stringAlgo, stringColVal});
-
-        Object result = encrypt.evaluate(new GenericUDF.DeferredObject[]{new GenericUDF.DeferredJavaObject(encKey), new GenericUDF.DeferredJavaObject(encAlgo), new GenericUDF.DeferredJavaObject(colVal)});
+        JavaStringObjectInspector resultInspector = (JavaStringObjectInspector) encrypt.initialize(new ObjectInspector[]{stringColVal,stringIdVal});
+        Object result = encrypt.evaluate(new GenericUDF.DeferredObject[]{new GenericUDF.DeferredJavaObject(colVal),  new GenericUDF.DeferredJavaObject(idVal)});
         Assert.assertNotEquals("wrongValue", resultInspector.getPrimitiveJavaObject(result));
     }
 
     @Test
     public void testEncryptReturnsNullValues() throws HiveException {
         Encrypt encrypt = new Encrypt();
-        ObjectInspector stringKey = PrimitiveObjectInspectorFactory.javaStringObjectInspector;
-        ObjectInspector stringAlgo = PrimitiveObjectInspectorFactory.javaStringObjectInspector;
+        ObjectInspector stringIdVal= PrimitiveObjectInspectorFactory.javaStringObjectInspector;
+
         ObjectInspector stringColVal = PrimitiveObjectInspectorFactory.javaStringObjectInspector;
 
-        JavaStringObjectInspector resultInspector = (JavaStringObjectInspector) encrypt.initialize(new ObjectInspector[]{stringKey, stringAlgo, stringColVal});
+        JavaStringObjectInspector resultInspector = (JavaStringObjectInspector) encrypt.initialize(new ObjectInspector[]{stringColVal,stringIdVal});
 
-        Object result = encrypt.evaluate(new GenericUDF.DeferredObject[]{new GenericUDF.DeferredJavaObject(null), new GenericUDF.DeferredJavaObject(null), new GenericUDF.DeferredJavaObject(null)});
+        Object result = encrypt.evaluate(new GenericUDF.DeferredObject[]{new GenericUDF.DeferredJavaObject(null), new GenericUDF.DeferredJavaObject(null)});
         Assert.assertNull(resultInspector.getPrimitiveJavaObject(result));
     }
 }

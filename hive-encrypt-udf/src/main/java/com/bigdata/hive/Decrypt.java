@@ -1,48 +1,44 @@
 package com.bigdata.hive;
 
+import com.bigdata.hive.util.Helper;
+import org.apache.hadoop.hive.common.classification.InterfaceAudience;
+import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.ql.exec.UDFArgumentException;
 import org.apache.hadoop.hive.ql.exec.UDFArgumentLengthException;
 import org.apache.hadoop.hive.ql.metadata.HiveException;
+import org.apache.hadoop.hive.ql.session.SessionState;
 import org.apache.hadoop.hive.ql.udf.generic.GenericUDF;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectInspectorFactory;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.StringObjectInspector;
+import com.bigdata.hive.service.AesEncryption;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 
 public class Decrypt extends GenericUDF {
 
-    private StringObjectInspector key;
-    private StringObjectInspector algorithm;
+    private StringObjectInspector identifier;
+
     private StringObjectInspector column;
+    private final AesEncryption aesEncryption = new AesEncryption();
+    volatile String algorithm = "AES/CBC/PKCS5Padding";
+    volatile Helper helper = new Helper();
 
     @Override
     public ObjectInspector initialize(ObjectInspector[] arguments) throws UDFArgumentException {
-        if (arguments.length != 3)
+        if (arguments.length != 2)
         {
-            throw new UDFArgumentLengthException("decrypt() only takes 3 arguments: key<String>, algorithm<String>, cipherColumn<String>");
+            throw new UDFArgumentLengthException("decrypt() only takes 2 arguments: cipherColumn<String>,identifier<String>");
         }
         // 1. Check we received the right object types.
         ObjectInspector a = arguments[0];
         ObjectInspector b = arguments[1];
-        ObjectInspector c = arguments[2];
 
-        if (!(a instanceof StringObjectInspector) || !(b instanceof StringObjectInspector) || !(c instanceof StringObjectInspector))
+        if (!(a instanceof StringObjectInspector) || !(b instanceof StringObjectInspector))
         {
-            throw new UDFArgumentException("first argument must be a string, second argument must be a string, third argument must be a string");
+            throw new UDFArgumentException("first argument must be a string, second argument must be a string");
         }
-        this.key = (StringObjectInspector) a;
-        this.algorithm = (StringObjectInspector) b;
-        this.column = (StringObjectInspector) c;
+        this.identifier = (StringObjectInspector) b;
+        this.column = (StringObjectInspector) a;
         
 
         // the return type of our function is a string, so we provide the correct object inspector
@@ -50,36 +46,20 @@ public class Decrypt extends GenericUDF {
     }
     @Override
     public Object evaluate(DeferredObject[] arguments) throws HiveException {
-        String encKey = key.getPrimitiveJavaObject(arguments[0].get());
-        String encAlgorithm = algorithm.getPrimitiveJavaObject(arguments[1].get());
-        String cipherColumn = column.getPrimitiveJavaObject(arguments[2].get());
 
-        if (encKey == null || cipherColumn == null || encAlgorithm == null) {
-            return null;
+        String cipherText = column.getPrimitiveJavaObject(arguments[0].get());
+        String id = identifier.getPrimitiveJavaObject(arguments[1].get());
+        String username= SessionState.get().getUserName();
+
+        String encKey = this.helper.getKeyFromCache(username, id);
+        if (encKey== "Invalid"){
+            return  "Invalid";
         }
-        SecretKeySpec secretKeySpec = new SecretKeySpec(Base64.getDecoder().decode(encKey), "AES");
-        Cipher cipher = null;
-        try {
-            cipher = Cipher.getInstance(encAlgorithm);
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-            e.printStackTrace();
-        }
-        try {
-            cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, new IvParameterSpec(new byte[16]));
-        } catch (InvalidKeyException | InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        }
-        byte[] plainText = new byte[0];
-        try {
-            plainText = cipher.doFinal(Base64.getDecoder().decode(cipherColumn));
-        } catch (IllegalBlockSizeException | BadPaddingException e) {
-            e.printStackTrace();
-        }
-        return new String(plainText);
+        return  this.aesEncryption.decrypt(this.algorithm,cipherText,encKey);
     }
 
     @Override
     public String getDisplayString(String[] strings) {
-        return "decrypt(key, algorithm, cipherColumn)";
+        return "decrypt(column, identifier)";
     }
 }
