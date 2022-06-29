@@ -57,13 +57,14 @@ public class Encrypt extends GenericUDF {
 
         String username= SessionState.get().getUserName();
 
-        String aesKey = helper.getKeyFromCache(username, identifier);
 
-        if (aesKey== "Invalid"){
-            return  "Invalid";
+        String encKey = helper.getKeyFromCache(username, identifier);
+
+        if (encKey== "Invalid" || encKey == "unauthorized"){
+            return  encKey;
         }
 
-        return  aesEncryption.encrypt(algorithm,colName,aesKey);
+        return  aesEncryption.encrypt(algorithm,colName,encKey);
     }
 
     @Override

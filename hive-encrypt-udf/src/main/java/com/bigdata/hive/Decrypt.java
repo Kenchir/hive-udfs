@@ -52,10 +52,13 @@ public class Decrypt extends GenericUDF {
         String username= SessionState.get().getUserName();
 
         String encKey = this.helper.getKeyFromCache(username, id);
-        if (encKey== "Invalid"){
-            return  "Invalid";
+
+        if (encKey== "Invalid" || encKey == "unauthorized"){
+            return  encKey;
         }
         return  this.aesEncryption.decrypt(this.algorithm,cipherText,encKey);
+
+
     }
 
     @Override
