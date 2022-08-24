@@ -26,19 +26,17 @@ public class EncryptionAlgorithmImpl implements EncryptionAlgorithm {
     public String encrypt(String algorithm, final String plainText, final String key) {
         String result;
 
+        if (plainText == null){
+            return  null;
+        }
+
         try {
             SecretKeySpec secretKeySpec = new SecretKeySpec(Base64.getDecoder().decode(key), "AES");
-
             Cipher cipher;
-
             byte[] cipherText;
-
             cipher = Cipher.getInstance(algorithm);
-
             cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, new IvParameterSpec(new byte[16]));
-
             cipherText = cipher.doFinal(plainText.getBytes());
-
             result = Base64.getEncoder().encodeToString(cipherText);
 
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException |
@@ -59,29 +57,26 @@ public class EncryptionAlgorithmImpl implements EncryptionAlgorithm {
      * @param key
      * @return plainText
      */
+
+
     @Override
     public String decrypt(String algorithm, String cipherText, String key) {
         String result;
 
+        if (cipherText == null){
+            return  null;
+        }
 
         try {
             SecretKeySpec secretKeySpec = new SecretKeySpec(Base64.getDecoder().decode(key), "AES");
-
             Cipher cipher;
-
             byte[] plainText;
-
             cipher = Cipher.getInstance(algorithm);
-
             cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, new IvParameterSpec(new byte[16]));
-
             plainText = cipher.doFinal(Base64.getDecoder().decode(cipherText));
-
             result = new String(plainText);
-
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException |
                  InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
-
             e.printStackTrace();
             result = "Invalid";
         }

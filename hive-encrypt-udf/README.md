@@ -3,7 +3,7 @@
 ## Usage
   The encrypt function takes three arguments:
    ``` java
-   encrypt(String encryptionKey, String encryptionAlgorithm, hive table column of string data type to encrypt )
+   encrypt hive table column of string data type to encrypt , identifier used in kms server)
    ```
 
 * Copy the jar to hdfs
@@ -15,13 +15,13 @@
   ./beeline -u "jdbc:hive2://<hive zk host port>"
   ```
 * Once inside beeline, issue below sql queries.
-* First create a function fro your udf
+* First create a function from your udf
   ``` sql
   create temporary function enc as 'com.bigdata.hive.Encrypt' using jar 'hdfs:///<path to your jar in hdfs>';
   ```
 * Use the function in your queries.
 ``` sql
-select enc('n9Tp9+69gxNdUg9F632u1cCRuqcOuGmN','AES/CBC/PKCS5Padding',name) from employees2
+select enc('name','id') from employees2
 ```
 
 ## Sample table
@@ -49,12 +49,12 @@ INFO  : OK
 ## Sample Encrypted name column
 
 ``` bash
-0: jdbc:hive2://bigdatadev> select enc('n9Tp9+69gxNdUg9F632u1cCRuqcOuGmN','AES/CBC/PKCS5Padding',name) as enc_name, destination from employees2;
-INFO  : Compiling command(queryId=hive_20220330095147_6472db4d-702a-4c0c-ad4c-296bbda2f6be): select enc('n9Tp9+69gxNdUg9F632u1cCRuqcOuGmN','AES/CBC/PKCS5Padding',name) as enc_name, destination from employees2
+0: jdbc:hive2://bigdatadev> select enc(name,'id') as enc_name, destination from employees2;
+INFO  : Compiling command(queryId=hive_20220330095147_6472db4d-702a-4c0c-ad4c-296bbda2f6be): select  enc(name,'id') as enc_name, destination from employees2
 INFO  : Semantic Analysis Completed (retrial = false)
 INFO  : Returning Hive schema: Schema(fieldSchemas:[FieldSchema(name:enc_name, type:string, comment:null), FieldSchema(name:destination, type:string, comment:null)], properties:null)
 INFO  : Completed compiling command(queryId=hive_20220330095147_6472db4d-702a-4c0c-ad4c-296bbda2f6be); Time taken: 1.251 seconds
-INFO  : Executing command(queryId=hive_20220330095147_6472db4d-702a-4c0c-ad4c-296bbda2f6be): select enc('n9Tp9+69gxNdUg9F632u1cCRuqcOuGmN','AES/CBC/PKCS5Padding',name) as enc_name, destination from employees2
+INFO  : Executing command(queryId=hive_20220330095147_6472db4d-702a-4c0c-ad4c-296bbda2f6be): select  enc(name,'id') as enc_name, destination from employees2
 INFO  : Completed executing command(queryId=hive_20220330095147_6472db4d-702a-4c0c-ad4c-296bbda2f6be); Time taken: 0.042 seconds
 INFO  : OK
 +---------------------------+--------------+
