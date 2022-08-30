@@ -11,9 +11,10 @@ import org.apache.hadoop.hive.ql.udf.generic.GenericUDF;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectInspectorFactory;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.StringObjectInspector;
+import org.apache.hive.com.esotericsoftware.kryo.DefaultSerializer;
 
 
-
+@DefaultSerializer(value = DoNothingSerializer.class)
 public class Encrypt extends GenericUDF {
 
 
@@ -57,13 +58,12 @@ public class Encrypt extends GenericUDF {
 
         String username= SessionState.get().getUserName();
 
-
         String encKey = helper.getKeyFromCache(username, identifier);
 
-        if (encKey== "Invalid" || encKey == "unauthorized"){
+        if (encKey.contains("Invalid") || encKey.contains("unauthorized")){
             return  encKey;
         }
-
+//        return  encKey;
         return  aesEncryption.encrypt(algorithm,colName,encKey);
     }
 

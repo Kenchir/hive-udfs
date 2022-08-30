@@ -1,8 +1,11 @@
 package com.bigdata.hive.service;
 
+import com.bigdata.hive.util.Helper;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import org.apache.log4j.Logger;
+
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -14,7 +17,7 @@ public  class AesEncryption  {
     public AesEncryption(){
         this.encryptionAlgorithm = new EncryptionAlgorithmImpl();
     }
-
+    private static final Logger log = Logger.getLogger(AesEncryption.class);
 
     volatile  Long cachedItemsExpiry = 1L;
 
@@ -45,6 +48,7 @@ public  class AesEncryption  {
 
     public   String decrypt(String algorithm,String cipherText, String aesKey){
         String cacheKeyName = algorithm + "_"+ cipherText + "_" + aesKey;
+        log.debug("KMS KEY DECRYPT:  " + aesKey);
         try {
             return plainTextCache.get(cacheKeyName);
         } catch (ExecutionException e) {

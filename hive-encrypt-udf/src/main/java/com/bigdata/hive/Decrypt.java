@@ -1,8 +1,6 @@
 package com.bigdata.hive;
 
 import com.bigdata.hive.util.Helper;
-import org.apache.hadoop.hive.common.classification.InterfaceAudience;
-import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.ql.exec.UDFArgumentException;
 import org.apache.hadoop.hive.ql.exec.UDFArgumentLengthException;
 import org.apache.hadoop.hive.ql.metadata.HiveException;
@@ -12,10 +10,12 @@ import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectInspectorFactory;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.StringObjectInspector;
 import com.bigdata.hive.service.AesEncryption;
+import org.apache.hive.com.esotericsoftware.kryo.DefaultSerializer;
+import org.apache.log4j.Logger;
 
-
+@DefaultSerializer(value = DoNothingSerializer1.class)
 public class Decrypt extends GenericUDF {
-
+    private static final Logger log = Logger.getLogger(Decrypt.class);
     private StringObjectInspector identifier;
 
     private StringObjectInspector column;
@@ -49,11 +49,11 @@ public class Decrypt extends GenericUDF {
 
         String cipherText = column.getPrimitiveJavaObject(arguments[0].get());
         String id = identifier.getPrimitiveJavaObject(arguments[1].get());
-        String username= SessionState.get().getUserName();
+//        String username= SessionState.get().getUserName();
 
-        String encKey = this.helper.getKeyFromCache(username, id);
-
-        if (encKey== "Invalid" || encKey == "unauthorized"){
+        String encKey = this.helper.getKeyFromCache("hive", id);
+    log.debug("KMS KEY:  " + encKey);
+        if (encKey.contains("Invalid") || encKey.contains("unauthorized")){
             return  encKey;
         }
         return  this.aesEncryption.decrypt(this.algorithm,cipherText,encKey);
