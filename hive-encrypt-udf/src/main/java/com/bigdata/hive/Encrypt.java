@@ -56,14 +56,12 @@ public class Encrypt extends GenericUDF {
             return null;
         }
 
-        String username= SessionState.get().getUserName();
-
-        String encKey = helper.getKeyFromCache(username, identifier);
+        String encKey = helper.getKeyFromCache("hive", identifier);
 
         if (encKey.contains("Invalid") || encKey.contains("unauthorized")){
             return  encKey;
         }
-//        return  encKey;
+
         return  aesEncryption.encrypt(algorithm,colName,encKey);
     }
 

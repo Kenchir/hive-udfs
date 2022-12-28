@@ -12,6 +12,9 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
+import static org.apache.commons.codec.binary.Base64.isBase64;
+
+
 public class EncryptionAlgorithmImpl implements EncryptionAlgorithm {
 
 
@@ -65,6 +68,9 @@ public class EncryptionAlgorithmImpl implements EncryptionAlgorithm {
 
         if (cipherText == null){
             return  null;
+        }
+        if (!isBase64(cipherText)){
+            return  cipherText;
         }
 
         try {

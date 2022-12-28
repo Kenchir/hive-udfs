@@ -13,7 +13,7 @@ public class DecryptTest {
     private final String encKey = "n9Tp9+69gxNdUg9F632u1cCRuqcOuGmN";
     private final String encAlgo = "AES/CBC/PKCS5Padding";
     private final String colVal = "123456789";
-    private final String cipherText = "b2vgwX61osfSwv/pMEBQzg==";
+    private final String cipherText = "123456789";
 
     @Test
     public void testDecryptReturnsCorrectValues() throws HiveException {
