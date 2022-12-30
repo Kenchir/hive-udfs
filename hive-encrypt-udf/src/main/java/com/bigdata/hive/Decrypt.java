@@ -13,6 +13,8 @@ import com.bigdata.hive.service.AesEncryption;
 import org.apache.hive.com.esotericsoftware.kryo.DefaultSerializer;
 import org.apache.log4j.Logger;
 
+import static org.apache.commons.codec.binary.Base64.isBase64;
+
 @DefaultSerializer(value = DoNothingSerializer1.class)
 public class Decrypt extends GenericUDF {
     private static final Logger log = Logger.getLogger(Decrypt.class);
@@ -50,6 +52,10 @@ public class Decrypt extends GenericUDF {
         String cipherText = column.getPrimitiveJavaObject(arguments[0].get());
         String id = identifier.getPrimitiveJavaObject(arguments[1].get());
 //        String username= SessionState.get().getUserName();
+
+        if (!isBase64(cipherText)){
+            return  cipherText;
+        }
 
         String encKey = this.helper.getKeyFromCache("hive", id);
     log.debug("KMS KEY:  " + encKey);

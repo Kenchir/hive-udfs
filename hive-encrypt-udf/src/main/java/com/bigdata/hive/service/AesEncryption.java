@@ -28,7 +28,7 @@ public  class AesEncryption  {
             .build(new CacheLoader<String, String>() {
                 @Override
                 public String load(String key) {
-                    String[] parts = key.split("_");
+                    String[] parts = key.split("\\^");
                     return encryptionAlgorithm.decrypt(parts[0],parts[1],parts[2]);
                 }
             });
@@ -40,14 +40,14 @@ public  class AesEncryption  {
             .build(new CacheLoader<String, String>() {
                 @Override
                 public String load(String key) {
-                    String[] parts = key.split("_");
+                    String[] parts = key.split("\\^");
                     return encryptionAlgorithm.encrypt(parts[0],parts[1],parts[2]);
                 }
             });
 
 
     public   String decrypt(String algorithm,String cipherText, String aesKey){
-        String cacheKeyName = algorithm + "_"+ cipherText + "_" + aesKey;
+        String cacheKeyName = algorithm + "\\^"+ cipherText + "\\^" + aesKey;
         log.debug("KMS KEY DECRYPT:  " + aesKey);
         try {
             return plainTextCache.get(cacheKeyName);
@@ -59,7 +59,7 @@ public  class AesEncryption  {
 
 
     public   String encrypt(String algorithm,String plainText, String aesKey){
-        String cacheKeyName = algorithm + "_"+ plainText + "_" + aesKey;
+        String cacheKeyName = algorithm + "\\^"+ plainText + "\\^" + aesKey;
 
         try {
             return cipherTextCache.get(cacheKeyName);

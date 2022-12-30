@@ -51,7 +51,7 @@ public class Helper {
             .build(new CacheLoader<String, String>() {
                 @Override
                 public String load(String key) {
-                    String[] parts = key.split("_");
+                    String[] parts = key.split("\\^");
                     return getKeyFromHttp(parts[0], parts[1]);
                 }
             });
@@ -143,7 +143,7 @@ public class Helper {
     }
     public String getKeyFromCache(String username, String id) {
 
-        String cacheKeyName = username + "_" + id;
+        String cacheKeyName = username + "\\^" + id;
         try {
             return this.aesKeyCache.get(cacheKeyName);
         } catch (ExecutionException e) {

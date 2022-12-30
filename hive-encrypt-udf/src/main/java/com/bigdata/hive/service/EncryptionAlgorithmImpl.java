@@ -66,13 +66,6 @@ public class EncryptionAlgorithmImpl implements EncryptionAlgorithm {
     public String decrypt(String algorithm, String cipherText, String key) {
         String result;
 
-        if (cipherText == null){
-            return  null;
-        }
-        if (!isBase64(cipherText)){
-            return  cipherText;
-        }
-
         try {
             SecretKeySpec secretKeySpec = new SecretKeySpec(Base64.getDecoder().decode(key), "AES");
             Cipher cipher;
@@ -82,9 +75,12 @@ public class EncryptionAlgorithmImpl implements EncryptionAlgorithm {
             plainText = cipher.doFinal(Base64.getDecoder().decode(cipherText));
             result = new String(plainText);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException |
-                 InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
+                  InvalidKeyException e) {
             e.printStackTrace();
             result = "Invalid";
+        } catch (   IllegalBlockSizeException | BadPaddingException e){
+            e.printStackTrace();
+            return  cipherText;
         }
 
 
