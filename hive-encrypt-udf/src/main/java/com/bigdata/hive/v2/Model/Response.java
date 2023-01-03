@@ -1,4 +1,4 @@
-package com.bigdata.hive.Model;
+package com.bigdata.hive.v2.Model;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;

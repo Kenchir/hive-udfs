@@ -1,15 +1,14 @@
-package com.bigdata.hive.util;
+package com.bigdata.hive.v2.util;
 
 
-import com.bigdata.hive.Model.Response;
-import com.bigdata.hive.Model.Token;
+import com.bigdata.hive.v2.Model.Response;
+import com.bigdata.hive.v2.Model.Token;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 import org.apache.hadoop.hive.conf.HiveConf;
-import org.apache.hive.spark.client.SparkClient;
 import org.apache.http.HttpEntity;
 import org.apache.http.ParseException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -30,7 +29,7 @@ import org.apache.spark.SparkConf;
 
 public class Helper {
     public final Long cachedItemsExpiry = 1L;
-    private final HiveConf hiveConf = new HiveConf();
+      HiveConf hiveConf = new HiveConf();
 
     SparkConf sparkConf = new SparkConf();
 
@@ -71,7 +70,6 @@ public class Helper {
         String aesKey = "unauthorized";
 
         try {
-
             String url = String.format(this.base_url + "/api/v1/key?id=%s&username=%s", id, username);
             HttpGet request = new HttpGet(url);
             request.addHeader("Authorization", this.getBearerFromCache());
@@ -143,7 +141,7 @@ public class Helper {
     }
     public String getKeyFromCache(String username, String id) {
 
-        String cacheKeyName = username + "\\^" + id;
+        String cacheKeyName = username + "^" + id;
         try {
             return this.aesKeyCache.get(cacheKeyName);
         } catch (ExecutionException e) {

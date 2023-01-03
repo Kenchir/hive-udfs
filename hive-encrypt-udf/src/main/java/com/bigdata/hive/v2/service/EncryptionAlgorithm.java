@@ -1,4 +1,4 @@
-package com.bigdata.hive.service;
+package com.bigdata.hive.v2.service;
 
 public interface EncryptionAlgorithm {
     /**

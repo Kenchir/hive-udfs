@@ -1,6 +1,5 @@
-package com.bigdata.hive.service;
+package com.bigdata.hive.v2.service;
 
-import com.bigdata.hive.util.Helper;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -23,7 +22,7 @@ public  class AesEncryption  {
 
 
     volatile LoadingCache<String, String> plainTextCache = CacheBuilder.newBuilder()
-            .maximumSize(10000)
+            .maximumSize(1000000)
             .expireAfterWrite(cachedItemsExpiry, TimeUnit.DAYS)
             .build(new CacheLoader<String, String>() {
                 @Override
@@ -35,7 +34,7 @@ public  class AesEncryption  {
 
 
     volatile LoadingCache<String, String> cipherTextCache = CacheBuilder.newBuilder()
-            .maximumSize(10000)
+            .maximumSize(1000000)
             .expireAfterWrite(cachedItemsExpiry, TimeUnit.DAYS)
             .build(new CacheLoader<String, String>() {
                 @Override
@@ -47,8 +46,9 @@ public  class AesEncryption  {
 
 
     public   String decrypt(String algorithm,String cipherText, String aesKey){
-        String cacheKeyName = algorithm + "\\^"+ cipherText + "\\^" + aesKey;
-        log.debug("KMS KEY DECRYPT:  " + aesKey);
+        String cacheKeyName = algorithm + "^"+ cipherText + "^" + aesKey;
+
+        System.out.println("Cache Key Name : "+cacheKeyName);
         try {
             return plainTextCache.get(cacheKeyName);
         } catch (ExecutionException e) {
@@ -59,7 +59,7 @@ public  class AesEncryption  {
 
 
     public   String encrypt(String algorithm,String plainText, String aesKey){
-        String cacheKeyName = algorithm + "\\^"+ plainText + "\\^" + aesKey;
+        String cacheKeyName = algorithm + "^"+ plainText + "^" + aesKey;
 
         try {
             return cipherTextCache.get(cacheKeyName);

@@ -1,4 +1,4 @@
-package com.bigdata.hive;
+package com.bigdata.hive.v2;
 
 import org.apache.hive.com.esotericsoftware.kryo.Kryo;
 import org.apache.hive.com.esotericsoftware.kryo.Serializer;

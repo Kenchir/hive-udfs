@@ -1,6 +1,5 @@
-package com.bigdata.hive;
+package com.bigdata.hive.v2;
 
-import org.apache.hadoop.hive.conf.HiveConf;
 import org.junit.Assert;
 import org.apache.hadoop.hive.ql.metadata.HiveException;
 import org.apache.hadoop.hive.ql.udf.generic.GenericUDF;

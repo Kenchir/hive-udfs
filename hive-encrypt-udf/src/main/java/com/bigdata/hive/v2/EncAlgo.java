@@ -1,4 +1,4 @@
-package com.bigdata.hive;
+package com.bigdata.hive.v2;
 
 public enum EncAlgo {
     AES_ECB("AES/ECB/PKCS5Padding"),

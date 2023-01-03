@@ -1,4 +1,4 @@
-package com.bigdata.hive.service;
+package com.bigdata.hive.v2.service;
 
 
 import javax.crypto.BadPaddingException;
@@ -27,9 +27,9 @@ public class EncryptionAlgorithmImpl implements EncryptionAlgorithm {
      */
     @Override
     public String encrypt(String algorithm, final String plainText, final String key) {
-        String result;
+        String result = null;
 
-        if (plainText == null){
+        if (plainText == null || plainText.trim().equals("")){
             return  null;
         }
 
@@ -43,14 +43,22 @@ public class EncryptionAlgorithmImpl implements EncryptionAlgorithm {
             result = Base64.getEncoder().encodeToString(cipherText);
 
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException |
-                 InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
+                 InvalidKeyException e) {
 
-            e.printStackTrace();
             result = "Invalid";
+        } catch (   IllegalBlockSizeException | BadPaddingException e){
+
+            if(!plainText.contains("==")){
+                result= plainText;
+            }else {
+                result = "Invalid";
+            }
+        } finally {
+            return result;
         }
 
 
-        return result;
+
     }
 
     /**
@@ -64,7 +72,11 @@ public class EncryptionAlgorithmImpl implements EncryptionAlgorithm {
 
     @Override
     public String decrypt(String algorithm, String cipherText, String key) {
-        String result;
+        if (cipherText == null || cipherText.trim().equals("")){
+            return  null;
+        }
+
+        String result = null;
 
         try {
             SecretKeySpec secretKeySpec = new SecretKeySpec(Base64.getDecoder().decode(key), "AES");
@@ -76,15 +88,21 @@ public class EncryptionAlgorithmImpl implements EncryptionAlgorithm {
             result = new String(plainText);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException |
                   InvalidKeyException e) {
-            e.printStackTrace();
+
             result = "Invalid";
         } catch (   IllegalBlockSizeException | BadPaddingException e){
-            e.printStackTrace();
-            return  cipherText;
+
+            if(cipherText.contains("==")){
+                result= "Invalid";
+            }else {
+                result = cipherText;
+            }
+        } finally {
+            return result;
         }
 
+//        return  result;
 
-        return result;
     }
 
 }
